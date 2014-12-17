@@ -20,7 +20,7 @@ class Client
     }
 
     public function connect() {
-        $fp = $this->client->connect("127.0.0.1", 9501 , 1);
+        $fp = $this->client->connect("127.0.0.1", 9502 , 1);
         if( !$fp ) {
             echo "Error: {$fp->errMsg}[{$fp->errCode}]\n";
             return;

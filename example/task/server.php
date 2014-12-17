@@ -12,7 +12,7 @@ class Server
     private $serv;
 
     public function __construct() {
-        $this->serv = new swoole_server("0.0.0.0", 9501);
+        $this->serv = new swoole_server("0.0.0.0", 9502);
         $this->serv->set(array(
             'worker_num' => 4,
             'daemonize' => false,
@@ -33,14 +33,17 @@ class Server
         $this->serv->start();
     }
     public function onStart( $serv ) {
+        cli_set_process_title('TaskMaster');
         echo "Start\n";
     }
 
     public function onConnect( $serv, $fd, $from_id ) {
-        echo "Client {$fd} connect\n";
+        echo "工人: {$from_id}等待处理任务" . PHP_EOL;
+        echo "Client {$fd} connect" . PHP_EOL;
     }
 
     public function onReceive( $serv, $fd, $from_id, $data ) {
+        echo "工人: {$from_id} 开始处理任务" . PHP_EOL;
         echo "Get Message From Client {$fd}:{$data}\n";
 
         // send a task to task worker.
@@ -55,11 +58,11 @@ class Server
     }
 
     public function onTask($serv, $task_id, $from_id, $data) {
-        echo "This Task {$task_id} from Worker {$from_id}\n";
+        echo "任务: {$task_id} 由任务工人: {$from_id} 执行\n";
         //echo "Data: {$data}\n";
 
         //处理业务逻辑
-        for($i = 0 ; $i < 10 ; $i ++ ) {
+        for($i = 0 ; $i < 4 ; $i ++ ) {
             sleep(1);
             echo "Taks {$task_id} Handle {$i} times...\n";
         }

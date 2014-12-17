@@ -19,12 +19,14 @@ class Server
             'daemonize' => false,
             //每个worker进程允许处理的最大任务数
             'max_request' => 10000,
+            'heartbeat_check_interval' => 60,
             'dispatch_mode' => 2,
             'debug_mode'=> 1
         ));
 
         //注册Server的事件回调函数
         $this->serv->on('Start', array($this, 'onStart'));
+        $this->serv->on('WorkerStart', array($this, 'onWorkerStart'));
         $this->serv->on('Connect', array($this, 'onConnect'));
         $this->serv->on('Receive', array($this, 'onReceive'));
         $this->serv->on('Close', array($this, 'onClose'));
@@ -32,11 +34,26 @@ class Server
         $this->serv->start();
     }
 
+    //主进程
     public function onStart($serv) {
+        //cli_set_process_title('MainWorker');
         echo "Server Start" . PHP_EOL;
     }
 
+    //进程组
+    public function onWorkerStart( $serv , $worker_id) {
+        //cli_set_process_title('GroupWorker');
+        // 在Worker进程开启时绑定定时器
+        echo "进程组:$worker_id" . PHP_EOL;
+    }
+
     public function onConnect(swoole_server $serv, $fd, $from_id ) {
+        //获取连接的客户端信息
+        $fdInfo = $serv->connection_info($fd);
+        echo '<pre>';
+        print_r($fdInfo);
+        echo '</pre>';
+
         $serv->send( $fd, "Welcome {$fd} Connect Server" );
     }
 
