@@ -5,13 +5,13 @@
  *
  * @auther moxiaobai
  * @since  2014/12/16
- *
  */
 
 require_once __DIR__ . '/Lib/Autoloader.php';
 
 use \Protocols\JsonProtocol;
 use \Server\Statistic;
+use \Config\Server;
 
 class Game {
 
@@ -21,19 +21,7 @@ class Game {
         $this->serv = new swoole_server("0.0.0.0", 9500);
 
         //通过配置获取
-        $this->serv->set(array(
-            //Worker进程数
-            'worker_num' => 4,
-            //task worker进程数
-            'task_worker_num' => 8,
-            //设置程序进入后台作为守护进程运行
-            'daemonize' => false,
-            //每个worker进程允许处理的最大任务数
-            'max_request' => 10000,
-            //'heartbeat_check_interval' => 60,
-            'dispatch_mode' => 2,
-            'debug_mode'=> 1
-        ));
+        $this->serv->set(Server::$game);
 
         //注册Server的事件回调函数
         $this->serv->on('Start', array($this, 'onStart'));
@@ -111,9 +99,8 @@ class Game {
             $serv->send($fd, JsonProtocol::encode($result));
         }
 
-        //请求数据统计
+        //请求数据统计,放在task执行
         $executionTime = $this->microtimeFloat() - $startTime;
-
         $report = array(
             'class'       => $class,
             'method'      => $method,
@@ -158,4 +145,4 @@ class Game {
     }
 }
 
-$game = new Game();
+new Game();
