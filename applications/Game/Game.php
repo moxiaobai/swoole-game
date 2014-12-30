@@ -25,6 +25,7 @@ class Game {
 
         //注册Server的事件回调函数
         $this->serv->on('Start', array($this, 'onStart'));
+        $this->serv->on('WorkerStart', array($this, 'onWorkerStart'));
         $this->serv->on('Connect', array($this, 'onConnect'));
         $this->serv->on('Receive', array($this, 'onReceive'));
         $this->serv->on('Close', array($this, 'onClose'));
@@ -38,6 +39,13 @@ class Game {
     //主进程启动
     public function onStart($serv) {
         echo "Server is Running" . PHP_EOL;
+
+        //print_r($serv->stats());
+
+    }
+
+    public function onWorkerStart($serv, $worker_id) {
+
     }
 
     public function onConnect($serv, $fd, $from_id ) {}
