@@ -38,13 +38,19 @@ class Server
     public function onStart($serv) {
         //cli_set_process_title('MainWorker');
         echo "Server Start" . PHP_EOL;
+
+        //管理进程的PID，通过向管理进程发送SIGUSR1信号可实现柔性重启
+        echo $serv->manager_pid . PHP_EOL;
+
+        //主进程的PID，通过向主进程发送SIGTERM信号可安全关闭服务器
+        echo $serv->master_pid . PHP_EOL;
     }
 
     //进程组
     public function onWorkerStart( $serv , $worker_id) {
         //cli_set_process_title('GroupWorker');
         // 在Worker进程开启时绑定定时器
-        echo "进程组:$worker_id" . PHP_EOL;
+        echo "Woker进程组: $worker_id" . PHP_EOL;
     }
 
     public function onConnect(swoole_server $serv, $fd, $from_id ) {
@@ -58,7 +64,7 @@ class Server
     }
 
     public function onReceive( swoole_server $serv, $fd, $from_id, $data ) {
-        echo "Get Message From Client {$fd}:{$data}" . PHP_EOL;
+        echo "Hello，Get Message From Client {$fd}:{$data}" . PHP_EOL;
     }
 
     public function onClose(swoole_server $serv, $fd, $from_id ) {

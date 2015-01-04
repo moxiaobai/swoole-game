@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Http Server
+ */
+
 require_once __DIR__ . '/Lib/Autoloader.php';
 
 class Server {

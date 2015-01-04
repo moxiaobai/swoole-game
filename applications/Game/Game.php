@@ -40,6 +40,12 @@ class Game {
     public function onStart($serv) {
         echo "Server is Running" . PHP_EOL;
 
+        //管理进程的PID，通过向管理进程发送SIGUSR1信号可实现柔性重启
+        echo $serv->manager_pid . PHP_EOL;
+
+        //主进程的PID，通过向主进程发送SIGTERM信号可安全关闭服务器
+        echo $serv->master_pid . PHP_EOL;
+
         //print_r($serv->stats());
 
     }
